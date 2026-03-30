@@ -1,0 +1,24 @@
+# Virtual Environments
+venv/
+.venv/
+env/
+
+# Scraper Output (Large files, excluded from version control)
+output/
+
+# Python Cache
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# System Files
+.DS_Store
+Thumbs.db
+
+# Environment Variables
+.env
+
+# IDE Settings
+.vscode/
+.idea/
