@@ -62,6 +62,7 @@ output/
 │       └── <url-stem>__<md5>.<ext>
 ├── map.json                 # All URL records with metadata
 ├── classified.json          # Page counts grouped by category
+├── extracted_texts.jsonl    # Clean text per page (produced by preprocess_all.py)
 └── crawler.log              # Full execution log
 ```
 
@@ -81,6 +82,33 @@ output/
   "child_count": 38
 }
 ```
+
+## Post-Crawl Text Extraction
+
+Once the crawler has finished, run `preprocess_all.py` to extract clean text from all saved HTML and PDF files into a single JSONL file suitable for passing to an LLM or RAG pipeline.
+
+**Prerequisite:** `output/map.json` must exist (produced by the crawler).
+
+```bash
+python preprocess_all.py           # extract all files
+python preprocess_all.py --test    # quick test: process first 20 records only
+```
+
+Output: `output/extracted_texts.jsonl` — one JSON record per page:
+
+```json
+{
+  "url":         "https://aca.nccu.edu.tw/zh/...",
+  "title":       "last-path-segment",
+  "source_type": "html",
+  "category":    "admin_academic",
+  "text":        "clean extracted text..."
+}
+```
+
+`source_type` is either `html` or `pdf`. Records with no extractable text or a non-OK crawl status are skipped.
+
+> This project is the crawler component of the NCCU Academic Affairs RAG system. See `RAG_README.md` for the full pipeline (chunking, embedding, Qdrant indexing, and LLM answer generation).
 
 ## Architecture
 
