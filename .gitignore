@@ -12,6 +12,11 @@ __pycache__/
 *.pyo
 *.pyd
 
+# Dev tools
+.playwright-mcp/
+.claude/
+CLAUDE.md
+
 # System Files
 .DS_Store
 Thumbs.db
