@@ -85,13 +85,13 @@ output/
 
 ## Post-Crawl Text Extraction
 
-Once the crawler has finished, run `preprocess_all.py` to extract clean text from all saved HTML and PDF files into a single JSONL file suitable for passing to an LLM or RAG pipeline.
+Once the crawler has finished, run `rag/preprocess_all.py` to extract clean text from all saved HTML and PDF files into a single JSONL file suitable for passing to an LLM or RAG pipeline.
 
 **Prerequisite:** `output/map.json` must exist (produced by the crawler).
 
 ```bash
-python preprocess_all.py           # extract all files
-python preprocess_all.py --test    # quick test: process first 20 records only
+python rag/preprocess_all.py           # extract all files
+python rag/preprocess_all.py --test    # quick test: process first 20 records only
 ```
 
 Output: `output/extracted_texts.jsonl` — one JSON record per page:
@@ -102,11 +102,12 @@ Output: `output/extracted_texts.jsonl` — one JSON record per page:
   "title":       "last-path-segment",
   "source_type": "html",
   "category":    "admin_academic",
-  "text":        "clean extracted text..."
+  "depth":       2,
+  "text":        "clean extracted text with [links](url) preserved..."
 }
 ```
 
-`source_type` is either `html` or `pdf`. Records with no extractable text or a non-OK crawl status are skipped.
+`source_type` is either `html` or `pdf`. Hyperlinks in HTML pages are preserved as `[text](url)` markdown. Pages with no content fall back to their `<title>` tag or URL filename as minimal text. Only failed fetches, non-PDF documents, and scanned/image PDFs are skipped.
 
 > This project is the crawler component of the NCCU Academic Affairs RAG system. See `RAG_README.md` for the full pipeline (chunking, embedding, Qdrant indexing, and LLM answer generation).
 
@@ -118,6 +119,8 @@ Output: `output/extracted_texts.jsonl` — one JSON record per page:
 | `config.py` | All tunables: limits, timeouts, subdomain→category mapping table |
 | `classifier.py` | Maps subdomain strings to category names |
 | `downloader.py` | HTTP fetching (httpx), content-type detection, file saving |
+| `rag/preprocess.py` | HTML/PDF text extraction; preserves hyperlinks as markdown, falls back to page title for empty pages |
+| `rag/preprocess_all.py` | Batch extraction of all crawled files → `output/extracted_texts.jsonl` |
 
 ## Configuration
 
